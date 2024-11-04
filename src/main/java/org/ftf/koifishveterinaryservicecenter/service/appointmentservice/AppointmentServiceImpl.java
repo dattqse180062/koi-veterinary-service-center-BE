@@ -187,7 +187,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         // voucher
         Integer voucherId = appointment.getVoucher().getId();
         if (voucherId != null) {
-            Voucher voucher = voucherService.findVoucherById(voucherId);
+            Integer subtractedVoucherId = voucherService.subtractAVoucherOfCustomer(customerId, appointment.getVoucher().getId());
+            Voucher voucher = voucherService.findVoucherById(subtractedVoucherId);
             newAppointment.setVoucher(voucher);
         }
 
