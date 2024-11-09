@@ -148,6 +148,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         // slot_id
         TimeSlot timeSlot = slotService.getTimeSlotById(appointment.getTimeSlot().getSlotId());
+        slotService.updateVeterinarianSlotsStatus(appointment.getVeterinarian().getUserId(), timeSlot.getSlotId(), SlotStatus.BOOKED);
         newAppointment.setTimeSlot(timeSlot);
 
         // user_id

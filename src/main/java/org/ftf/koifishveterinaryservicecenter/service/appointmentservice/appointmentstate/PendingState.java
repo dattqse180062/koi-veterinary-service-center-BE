@@ -48,9 +48,9 @@ public class PendingState implements AppointmentState {
         // set new status for the appointment
         appointment.setCurrentStatus(AppointmentStatus.CONFIRMED);
 
-        // Update Veterinarian_Slot status
-        TimeSlot timeSlot = slotService.getTimeSlotById(appointment.getTimeSlot().getSlotId());
-        slotService.updateVeterinarianSlotsStatus(appointment.getVeterinarian().getUserId(), timeSlot.getSlotId(), SlotStatus.BOOKED);
+//        // Update Veterinarian_Slot status
+//        TimeSlot timeSlot = slotService.getTimeSlotById(appointment.getTimeSlot().getSlotId());
+//        slotService.updateVeterinarianSlotsStatus(appointment.getVeterinarian().getUserId(), timeSlot.getSlotId(), SlotStatus.BOOKED);
 
         // get staff Id from authenticated User in order to log
         Integer staffId = authenticationService.getAuthenticatedUserId();
