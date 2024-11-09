@@ -125,11 +125,14 @@ public class SlotServiceImpl implements SlotService {
         veterinarianSlotId.setSlotId(slotId);
         veterinarianSlotId.setVeterinarianId(veterinarianId);
 
-        VeterinarianSlots veterinarianSlots = veterinarianSlotsRepository.findById(veterinarianSlotId).get();
+        //  VeterinarianSlots veterinarianSlots = veterinarianSlotsRepository.findById(veterinarianSlotId).get();
 
-        veterinarianSlots.setStatus(status);
+        Optional<VeterinarianSlots> veterinarianSlots = veterinarianSlotsRepository.findById(veterinarianSlotId);
+        veterinarianSlots.ifPresent(slots -> {
+            slots.setStatus(status);
+            veterinarianSlotsRepository.save(slots);
+        });
 
-        veterinarianSlotsRepository.save(veterinarianSlots);
     }
 
     @Override
