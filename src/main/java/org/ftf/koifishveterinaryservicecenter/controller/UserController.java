@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -358,16 +359,19 @@ public class UserController {
     // Lấy số liệu liên quan đến thanh toán
     @GetMapping("/paymentstatistics")
     public ResponseEntity<Map<String, String>> getPaymentStatistics(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime endDate) {
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         // Kiểm tra nếu startDate lớn hơn endDate thì trả về lỗi
         if (startDate.isAfter(endDate)) {
             return ResponseEntity.badRequest().body(Map.of("error", "startDate không được lớn hơn endDate"));
         }
 
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+
         // Gọi service để lấy thống kê
-        Map<String, String> statistics = userService.getPaymentStatistics(startDate, endDate);
+        Map<String, String> statistics = userService.getPaymentStatistics(startDateTime, endDateTime);
 
         return ResponseEntity.ok(statistics);
     }

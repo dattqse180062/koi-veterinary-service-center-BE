@@ -32,7 +32,7 @@ public class AppConfig {
     private CustomJwtDecoder customJwtDecoder;
 
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         return modelMapper;
@@ -79,7 +79,7 @@ public class AppConfig {
                         .requestMatchers("/api/v1/email/sendNotification").hasAnyAuthority("STA")
                         .requestMatchers("api/v1/email/sendBill").hasAnyAuthority("CUS")  // for test
 
-                        .requestMatchers("/files/**", "/favicon.ico", "/api/v1/users/service/{serviceId}", "/api/v1/users/*/average-rating", "/api/v1/users/average-rating/*").permitAll()
+                        .requestMatchers("/files/**", "/favicon.ico", "/api/v1/users/service/{serviceId}", "/api/v1/users/{veterinarianId}/average-rating", "/api/v1/users/average-rating/**", "/api/v1/users/veterinarians").permitAll()
                         .requestMatchers("/api/v1/email/sendNotification").hasAnyAuthority("STA")
                         .requestMatchers("api/v1/email/sendBill").hasAnyAuthority("CUS")  // for test
 
