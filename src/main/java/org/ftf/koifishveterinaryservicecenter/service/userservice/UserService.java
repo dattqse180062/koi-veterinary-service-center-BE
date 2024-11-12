@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,11 +62,12 @@ public interface UserService {
     // Hàm tính số liệu cuộc hẹn
     Map<String, String> getAppointmentStatistics();
 
-    // Hàm tính số liệu thanh toán
-    Map<String, String> getPaymentStatistics();
+
 
 
     long getVetSlotsInRange(int vetId, LocalDate startDate, LocalDate endDate);
+
+    Map<String, String> getPaymentStatistics(LocalDateTime startDate, LocalDateTime endDate);
 
     //them so luong feedback voi so luong sao trung binh cua bac si
     Map<String, Object> getFeedbackStatistics();

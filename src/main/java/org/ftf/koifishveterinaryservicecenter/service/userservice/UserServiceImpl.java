@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -571,66 +572,41 @@ public class UserServiceImpl implements UserService {
         return appointmentStatistics;
     }
 
+
     @Override
-    public Map<String, String> getPaymentStatistics() {
+    public Map<String, String> getPaymentStatistics(LocalDateTime startDate, LocalDateTime endDate) {
         Map<String, String> paymentStatistics = new HashMap<>();
 
-        // Tính số lượng thanh toán
-        long totalPayments = paymentRepository.count();
-        long totalPaymentsToday = paymentRepository.countPaymentsToday();
+        // Tính số lượng thanh toán trong khoảng thời gian
+        long totalPayments = paymentRepository.countPaymentsInRange(startDate, endDate);
 
-        // Tính tổng số tiền thanh toán và tổng tiền thanh toán trong ngày
-        double totalAmountToday = (paymentRepository.sumTotalAmountToday() != null) ? paymentRepository.sumTotalAmountToday() : 0.0;
-        double totalAmount = (paymentRepository.sumTotalAmount() != null) ? paymentRepository.sumTotalAmount() : 0.0;
+        // Tính tổng số tiền thanh toán trong khoảng thời gian
+        double totalAmount = (paymentRepository.sumTotalAmountInRange(startDate, endDate) != null)
+                ? paymentRepository.sumTotalAmountInRange(startDate, endDate)
+                : 0.0;
 
-        // Tính số lượng thanh toán theo phương thức
-        long cashPayments = paymentRepository.countByPaymentMethod(PaymentMethod.CASH);
-        long vnPayPayments = paymentRepository.countByPaymentMethod(PaymentMethod.VN_PAY);
+        // Tính số lượng thanh toán theo phương thức trong khoảng thời gian
+        long cashPayments = paymentRepository.countByPaymentMethodInRange(PaymentMethod.CASH, startDate, endDate);
+        long vnPayPayments = paymentRepository.countByPaymentMethodInRange(PaymentMethod.VN_PAY, startDate, endDate);
 
-        long cashPaymentsToday = paymentRepository.countByPaymentMethodToday(PaymentMethod.CASH);
-        long vnPayPaymentsToday = paymentRepository.countByPaymentMethodToday(PaymentMethod.VN_PAY);
-
-        // Thống kê theo trạng thái "PAID" và "NOT_PAID"
-        long paidPayments = paymentRepository.countByStatus(PaymentStatus.PAID);
-        long notPaidPayments = paymentRepository.countByStatus(PaymentStatus.NOT_PAID);
-
-        long paidPaymentsToday = paymentRepository.countByStatusToday(PaymentStatus.PAID);
-        long notPaidPaymentsToday = paymentRepository.countByStatusToday(PaymentStatus.NOT_PAID);
-
-        // Tính số lượng thanh toán theo tháng
-        int currentMonth = LocalDate.now().getMonthValue();
-        int currentYear = LocalDate.now().getYear();
-        long paymentsThisMonth = paymentRepository.countByMonth(currentMonth, currentYear);
-
-        // Tính số lượng thanh toán theo quý
-        int currentQuarter = (currentMonth - 1) / 3 + 1;
-        long paymentsThisQuarter = paymentRepository.countByQuarter(currentQuarter, currentYear);
+        // Thống kê theo trạng thái "PAID" và "NOT_PAID" trong khoảng thời gian
+        long paidPayments = paymentRepository.countByStatusInRange(PaymentStatus.PAID, startDate, endDate);
+        long notPaidPayments = paymentRepository.countByStatusInRange(PaymentStatus.NOT_PAID, startDate, endDate);
 
         // Thêm các giá trị vào map paymentStatistics
         paymentStatistics.put("totalPayments", String.valueOf(totalPayments));
-        paymentStatistics.put("totalPaymentsToday", String.valueOf(totalPaymentsToday));
         paymentStatistics.put("totalAmount", String.valueOf(totalAmount));
-        paymentStatistics.put("totalAmountToday", String.valueOf(totalAmountToday));
 
         // Thêm thống kê theo phương thức thanh toán
         paymentStatistics.put("cashPayments", String.valueOf(cashPayments));
         paymentStatistics.put("vnPayPayments", String.valueOf(vnPayPayments));
-        paymentStatistics.put("cashPaymentsToday", String.valueOf(cashPaymentsToday));
-        paymentStatistics.put("vnPayPaymentsToday", String.valueOf(vnPayPaymentsToday));
 
         // Thống kê theo trạng thái
         paymentStatistics.put("paidPayments", String.valueOf(paidPayments));
         paymentStatistics.put("notPaidPayments", String.valueOf(notPaidPayments));
-        paymentStatistics.put("paidPaymentsToday", String.valueOf(paidPaymentsToday));
-        paymentStatistics.put("notPaidPaymentsToday", String.valueOf(notPaidPaymentsToday));
-
-        // Thêm số lượng thanh toán theo tháng và quý
-        paymentStatistics.put("paymentsThisMonth", String.valueOf(paymentsThisMonth));
-        paymentStatistics.put("paymentsThisQuarter", String.valueOf(paymentsThisQuarter));
 
         return paymentStatistics;
     }
-
     @Override
     public long getVetSlotsInRange(int vetId, LocalDate startDate, LocalDate endDate) {
         long totalSlots = 0;
