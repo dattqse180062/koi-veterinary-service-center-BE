@@ -310,10 +310,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private void logToStatus(Appointment appointment, User cancelledActor) {
         Status status = new Status();
+
         status.setAppointment(appointment);
         status.setStatusName(appointment.getCurrentStatus().toString());
         status.setTime(LocalDateTime.now());
-        status.setNote("Staff - marked CANCELLED the appointment successfully");
+        status.setNote(cancelledActor.getRole().getRoleName() + " - marked CANCELLED the appointment successfully");
         status.setUser(cancelledActor);
         appointment.addStatus(status);
     }
