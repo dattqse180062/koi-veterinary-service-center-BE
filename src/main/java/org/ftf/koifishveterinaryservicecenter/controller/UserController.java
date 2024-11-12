@@ -21,6 +21,7 @@ import org.ftf.koifishveterinaryservicecenter.service.feedbackservice.FeedbackSe
 import org.ftf.koifishveterinaryservicecenter.service.slotservice.SlotService;
 import org.ftf.koifishveterinaryservicecenter.service.userservice.AuthenticationServiceImpl;
 import org.ftf.koifishveterinaryservicecenter.service.userservice.UserService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -354,9 +356,20 @@ public class UserController {
     }
 
     // Lấy số liệu liên quan đến thanh toán
-    @GetMapping("/payment-statistics")
-    public Map<String, String> getPaymentStatistics() {
-        return userService.getPaymentStatistics();
+    @GetMapping("/paymentstatistics")
+    public ResponseEntity<Map<String, String>> getPaymentStatistics(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime endDate) {
+
+        // Kiểm tra nếu startDate lớn hơn endDate thì trả về lỗi
+        if (startDate.isAfter(endDate)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "startDate không được lớn hơn endDate"));
+        }
+
+        // Gọi service để lấy thống kê
+        Map<String, String> statistics = userService.getPaymentStatistics(startDate, endDate);
+
+        return ResponseEntity.ok(statistics);
     }
 
     // Kiểm tra vet được đặt bao nhiêu lần trong khoảng thời gian cụ thể
