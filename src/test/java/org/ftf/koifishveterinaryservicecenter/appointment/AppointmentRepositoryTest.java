@@ -84,7 +84,7 @@ public class AppointmentRepositoryTest {
 
     @Test
     public void testGetAppointmentById() {
-        Integer appointmentId = 26;
+        Integer appointmentId = 20;
         Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
         Assertions.assertThat(appointment).isPresent();
         System.out.println(appointment.get().getTimeSlot().toString());
