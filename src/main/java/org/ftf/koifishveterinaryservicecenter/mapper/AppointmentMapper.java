@@ -50,6 +50,7 @@ public interface AppointmentMapper {
 
     @Mapping(target = "service.description", ignore = true)
     @Mapping(source = "currentStatus", target = "currentStatus")
+    @Mapping(source = "followUpAppointment.appointmentId", target = "followUpAppointmentId")
     @Mapping(target = "veterinarian", ignore = true)
     @Mapping(target = "totalPrice", ignore = true)
     @Mapping(target = "service.servicePrice", ignore = true)
