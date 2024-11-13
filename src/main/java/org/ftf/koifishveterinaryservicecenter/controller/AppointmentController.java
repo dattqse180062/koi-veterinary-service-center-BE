@@ -123,7 +123,7 @@ public class AppointmentController {
             Appointment convertedAppointment = AppointmentMapper.INSTANCE.convertedToAppointment(appointmentDto);
             appointmentService.createAppointment(convertedAppointment, userId);
             return new ResponseEntity<>("Booked an appointment successfully", HttpStatus.CREATED);
-        } catch (UserNotFoundException | AddressNotFoundException exception) {
+        } catch (UserNotFoundException | AddressNotFoundException | TimeSlotNotFoundException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
