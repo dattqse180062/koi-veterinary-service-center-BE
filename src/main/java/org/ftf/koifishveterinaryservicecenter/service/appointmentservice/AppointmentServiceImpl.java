@@ -202,6 +202,19 @@ public class AppointmentServiceImpl implements AppointmentService {
         Payment savedPayment = paymentService.createPayment(payment);
         newAppointment.setPayment(savedPayment);
 
+        // check vet_slot is AVAILABLE
+        if (appointment.getVeterinarian().getUserId() != null) {
+            VeterinarianSlots veterinarianSlots = slotService.getVeterinarianSlotById(appointment.getVeterinarian().getUserId(), appointment.getTimeSlot().getSlotId());
+            if (!veterinarianSlots.getStatus().equals(SlotStatus.AVAILABLE))
+                throw new TimeSlotNotFoundException("The slot is already booked");
+        }
+
+        if (appointment.getVeterinarian().getUserId() == null) {
+            List<VeterinarianSlots> veterinarianSlots = slotService.getVeterinarianSlotsBySlotId(appointment.getTimeSlot().getSlotId());
+            if (veterinarianSlots == null || veterinarianSlots.isEmpty())
+                throw new TimeSlotNotFoundException("The slot is already booked");
+        }
+
         appointmentRepository.save(newAppointment);
     }
 

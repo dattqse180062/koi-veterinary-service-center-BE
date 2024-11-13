@@ -26,4 +26,7 @@ public interface SlotService {
 
     List<TimeSlot> getAvailableSlots();
 
+    VeterinarianSlots getVeterinarianSlotById(Integer veterinarianSlotId, Integer slotId);
+
+
 }

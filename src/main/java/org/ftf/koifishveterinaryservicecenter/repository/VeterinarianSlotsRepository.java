@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 
 public interface VeterinarianSlotsRepository extends JpaRepository<VeterinarianSlots, VeterinarianSlotId> {
@@ -30,5 +31,7 @@ public interface VeterinarianSlotsRepository extends JpaRepository<VeterinarianS
                                @Param("month") Integer month,
                                @Param("day") Integer day);
 
+    @Query("SELECT vs FROM  VeterinarianSlots vs WHERE vs.veterinarianSlotId = ?1")
+    VeterinarianSlots findVeterinarianSlotsByVeterinarianSlotId(VeterinarianSlotId veterinarianSlotId);
 
-  }
+}

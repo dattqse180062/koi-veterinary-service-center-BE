@@ -191,4 +191,16 @@ public class SlotServiceImpl implements SlotService {
         return timeSlots;
     }
 
+    @Override
+    public VeterinarianSlots getVeterinarianSlotById(Integer veterinarianId, Integer slotId) {
+        VeterinarianSlotId veterinarianSlotId = new VeterinarianSlotId();
+        veterinarianSlotId.setSlotId(slotId);
+        veterinarianSlotId.setVeterinarianId(veterinarianId);
+
+        VeterinarianSlots veterinarianSlots = veterinarianSlotsRepository.findVeterinarianSlotsByVeterinarianSlotId(veterinarianSlotId);
+        if (veterinarianSlots == null)
+            throw new TimeSlotNotFoundException("There are no veterinarian slots");
+        return veterinarianSlots;
+    }
+
 }
