@@ -28,6 +28,7 @@ import org.ftf.koifishveterinaryservicecenter.service.voucherservice.VoucherServ
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -121,7 +122,22 @@ public class AppointmentServiceImpl implements AppointmentService {
         return statuses;
     }
 
+    @Transactional
     public void createAppointment(Appointment appointment, Integer customerId) {
+
+        // check vet_slot is AVAILABLE
+        if (appointment.getVeterinarian().getUserId() != null) {
+            VeterinarianSlots veterinarianSlots = slotService.getVeterinarianSlotById(appointment.getVeterinarian().getUserId(), appointment.getTimeSlot().getSlotId());
+            if (!veterinarianSlots.getStatus().equals(SlotStatus.AVAILABLE))
+                throw new TimeSlotNotFoundException("The slot is already booked");
+        }
+
+        if (appointment.getVeterinarian().getUserId() == null) {
+            List<VeterinarianSlots> veterinarianSlots = slotService.getVeterinarianSlotsBySlotId(appointment.getTimeSlot().getSlotId());
+            if (veterinarianSlots == null || veterinarianSlots.isEmpty())
+                throw new TimeSlotNotFoundException("The slot is already booked");
+        }
+
         // 1. online booking
         // 2. consultation at home
 
@@ -201,19 +217,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         payment.setAmount(newAppointment.getTotalPrice());
         Payment savedPayment = paymentService.createPayment(payment);
         newAppointment.setPayment(savedPayment);
-
-        // check vet_slot is AVAILABLE
-        if (appointment.getVeterinarian().getUserId() != null) {
-            VeterinarianSlots veterinarianSlots = slotService.getVeterinarianSlotById(appointment.getVeterinarian().getUserId(), appointment.getTimeSlot().getSlotId());
-            if (!veterinarianSlots.getStatus().equals(SlotStatus.AVAILABLE))
-                throw new TimeSlotNotFoundException("The slot is already booked");
-        }
-
-        if (appointment.getVeterinarian().getUserId() == null) {
-            List<VeterinarianSlots> veterinarianSlots = slotService.getVeterinarianSlotsBySlotId(appointment.getTimeSlot().getSlotId());
-            if (veterinarianSlots == null || veterinarianSlots.isEmpty())
-                throw new TimeSlotNotFoundException("The slot is already booked");
-        }
 
         appointmentRepository.save(newAppointment);
     }
