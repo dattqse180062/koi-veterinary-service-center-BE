@@ -10,6 +10,8 @@ import org.ftf.koifishveterinaryservicecenter.service.userservice.Authentication
 import org.ftf.koifishveterinaryservicecenter.service.userservice.UserService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class OngoingState implements AppointmentState {
 
@@ -43,6 +45,9 @@ public class OngoingState implements AppointmentState {
             throw new IllegalStateException("Only Staff/Veterinarian can update appointments from ON_GOING to CHECKED_IN");
     }
 
+    public boolean isOnTimeToCheckin(Appointment appointment) {
+        return LocalDateTime.now().isAfter(appointment.getTimeSlot().getDateTimeBasedOnSlot());
+    }
 
 
 }
