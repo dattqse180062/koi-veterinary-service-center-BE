@@ -207,7 +207,7 @@ public class PaymentController {
 
                 response.sendRedirect(frontendDomain + "/my-appointment"); // Redirect to appointment details page of FE
             } else {
-                response.sendRedirect(frontendDomain + "/my-appointment" + appointmentId);
+                response.sendRedirect(frontendDomain + "/my-appointment");
             }
         } catch (Exception e) {
             response.sendRedirect(frontendDomain + "/my-appointment");
